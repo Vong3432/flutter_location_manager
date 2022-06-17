@@ -12,16 +12,18 @@ class LocationAPIClass: NSObject, LocationAPI {
     let methodChannel: FlutterMethodChannel
     private(set) static var locationManager = LocationManager()
     private var cancellable = Set<AnyCancellable>()
+    private var listen: Bool = false
     
     init(methodChannel: FlutterMethodChannel) {
         self.methodChannel = methodChannel
     }
     
     func listenLocationCoordinateWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>) {
+        listen = true
         LocationAPIClass.locationManager.startUpdating()
         LocationAPIClass.locationManager.$lastLocation
             .sink { [weak self] clLocation in
-                guard let clLocation = clLocation else { return }
+                guard let clLocation = clLocation, self?.listen == true else { return }
                 
                 var location: [String: Any] = [:]
                 location["latitude"] = clLocation.coordinate.latitude
@@ -37,6 +39,7 @@ class LocationAPIClass: NSObject, LocationAPI {
     
     func stopListenLocationCoordinateWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>) {
         LocationAPIClass.locationManager.stopUpdating()
+        listen = false
     }
     
     
@@ -76,7 +79,7 @@ class LocationAPIClass: NSObject, LocationAPI {
         LocationAPIClass.locationManager.getCurrentLocation()
         
         guard let coord = LocationAPIClass.locationManager.lastLocation else {
-            error.pointee = FlutterError(code: "", message: "Could not get location", details: nil)
+//            error.pointee = FlutterError(code: "", message: "Could not get location", details: nil)
             return nil
         }
         
