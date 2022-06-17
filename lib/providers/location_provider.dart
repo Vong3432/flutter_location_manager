@@ -3,7 +3,7 @@ import 'package:location_manager/core/location_manager.dart';
 import 'package:location_manager/core/location_manager_delegate.dart';
 import 'package:location_manager/location.dart';
 
-class LocationAPIProvider with ChangeNotifier, LocationManagerDelegateMixin {
+class LocationAPIProvider with ChangeNotifier, LocationManagerDelegate {
   LocationCoordinate? coordinate;
 
   String status = "";
@@ -11,12 +11,6 @@ class LocationAPIProvider with ChangeNotifier, LocationManagerDelegateMixin {
   late LocationManager locationManager = LocationManager(
     delegate: this,
   );
-
-  @override
-  void onLocationCoordinateChanged(LocationCoordinate? coordinate) {
-    this.coordinate = coordinate;
-    notifyListeners();
-  }
 
   Future<void> getStatus() async {
     String status = await locationManager.getLocationManagerStatus();
@@ -38,5 +32,11 @@ class LocationAPIProvider with ChangeNotifier, LocationManagerDelegateMixin {
 
   void stop() {
     locationManager.stopWatchLocation();
+  }
+
+  @override
+  void onLocationCoordinateChanged(LocationCoordinate? coordinate) {
+    this.coordinate = coordinate;
+    notifyListeners();
   }
 }

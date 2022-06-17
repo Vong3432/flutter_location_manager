@@ -12,7 +12,7 @@ class LocationManager {
   LocationCoordinate? locationCoordinate;
 
   // delgate
-  LocationManagerDelegateMixin? delegate;
+  LocationManagerDelegate? delegate;
 
   // constructor
   LocationManager({
